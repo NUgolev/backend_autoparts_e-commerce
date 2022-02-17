@@ -55,21 +55,7 @@ class CategoryViewSet(ModelViewSet):
         return Response(self.serializer_class(queryset, many=True).data)
 
 
-class ProductFilterViewSet(ModelViewSet):
-    """
-    Вид для просмотра списка продуктов
-    """
-
-    queryset = Filter.objects.all()
-    serializer_class = ProductFilterSerializer
-    permission_classes = []
-    pagination_class = None
-    filterset_class = ProductFilterFilter
-    http_method_names = ["get"]
-
-
 view_sets = [
     ("product", ProductViewSet),
     ("category", CategoryViewSet),
-    ("filter", ProductFilterViewSet),
 ]

@@ -32,6 +32,13 @@ class ProductFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(
         method="search_filter", label="Поиск по названию/описанию"
     )
+    filter = django_filters.CharFilter(
+        method="prop_filter", label="Поиск по общим свойствам продуктов"
+    )
+
+    def prop_filter(self, queryset, name, value):
+        values = value.split(',')
+        return queryset.filter(filter_values__value__in=values)
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(
@@ -44,34 +51,4 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ["price_gte", "price_lte", "category", "ordering"]
-
-
-class ProductFilterFilter(django_filters.FilterSet):
-    price_gte = django_filters.NumberFilter(field_name="values__product__price", lookup_expr="gte")
-    price_lte = django_filters.NumberFilter(field_name="values__product__price", lookup_expr="lte")
-    ordering = django_filters.OrderingFilter(
-        fields=(
-            ("price", "values__product__price"),
-            ("id", "values__product__id"),
-        )
-    )
-    category = django_filters.NumberFilter(
-        method="category_filter", label="Поиск id категории"
-    )
-    search = django_filters.CharFilter(
-        method="search_filter", label="Поиск по названию/описанию"
-    )
-
-    def search_filter(self, queryset, name, value):
-        return queryset.filter(
-            Q(values__product__name__icontains=value) | Q(values__product__description__icontains=value)
-        )
-
-    def category_filter(self, queryset, name, value):
-        where = f"category_id = any(get_children({value}))"
-        return queryset.extra(where=[where])
-
-    class Meta:
-        model = Filter
         fields = ["price_gte", "price_lte", "category", "ordering"]
