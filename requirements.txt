@@ -1,0 +1,14 @@
+Django==2.2.*
+django-appconf
+djangorestframework
+djangorestframework-simplejwt
+psycopg2-binary==2.8.6
+pytz
+django-environ
+django-cors-headers
+requests
+django-filter
+drf-spectacular
+PyJWT
+drf-spectacular-sidecar
+black
