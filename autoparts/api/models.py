@@ -33,17 +33,6 @@ class Product(models.Model):
         permissions = ()
 
 
-class Filter(models.Model):
-    name = models.TextField(verbose_name="Название фильтра")
-    category = models.ForeignKey(
-        Category, on_delete=PROTECT, verbose_name="Категория", related_name="filters"
-    )
-
-    class Meta:
-        db_table = "filter"
-        permissions = ()
-
-
 class PayType(models.Model):
     name = models.TextField(verbose_name="Название способа оплаты")
 
@@ -76,11 +65,24 @@ class OrderProducts(models.Model):
         permissions = ()
 
 
+class Filter(models.Model):
+    name = models.TextField(verbose_name="Название фильтра")
+    category = models.ForeignKey(
+        Category, on_delete=PROTECT, verbose_name="Категория", related_name="filters"
+    )
+
+    class Meta:
+        db_table = "filter"
+        permissions = ()
+
+
 class ProductFilterValue(models.Model):
     product = models.ForeignKey(
         Product, on_delete=CASCADE, related_name="filter_values", verbose_name="Продукт"
     )
-    filter = models.ForeignKey(Filter, on_delete=CASCADE, verbose_name="Фильтр", related_name="values")
+    filter = models.ForeignKey(
+        Filter, on_delete=CASCADE, verbose_name="Фильтр", related_name="values"
+    )
     value = models.TextField(verbose_name="Значение")
 
     class Meta:

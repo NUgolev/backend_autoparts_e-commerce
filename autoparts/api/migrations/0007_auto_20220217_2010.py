@@ -7,23 +7,39 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0006_get_children_func'),
+        ("api", "0006_get_children_func"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='parent',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='api.Category', verbose_name='Родительская категория'),
+            model_name="category",
+            name="parent",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="children",
+                to="api.Category",
+                verbose_name="Родительская категория",
+            ),
         ),
         migrations.AlterField(
-            model_name='productfiltervalue',
-            name='filter',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='values', to='api.Filter', verbose_name='Фильтр'),
+            model_name="productfiltervalue",
+            name="filter",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="values",
+                to="api.Filter",
+                verbose_name="Фильтр",
+            ),
         ),
         migrations.AlterField(
-            model_name='productfiltervalue',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='filter_values', to='api.Product', verbose_name='Продукт'),
+            model_name="productfiltervalue",
+            name="product",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="filter_values",
+                to="api.Product",
+                verbose_name="Продукт",
+            ),
         ),
     ]

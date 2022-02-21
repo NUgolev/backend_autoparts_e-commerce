@@ -58,12 +58,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductFilterSerializer(serializers.ModelSerializer):
     name = serializers.CharField()
-    values = serializers.SlugRelatedField("value", many=True, queryset=ProductFilterValue.objects.all())
+    values = serializers.SlugRelatedField(
+        "value", many=True, queryset=ProductFilterValue.objects.all()
+    )
 
     class Meta:
         model = Product
-        fields = [
-            "id",
-            "name",
-            "values"
-        ]
+        fields = ["id", "name", "values"]

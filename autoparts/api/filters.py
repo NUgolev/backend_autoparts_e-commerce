@@ -1,3 +1,5 @@
+import json
+
 import django_filters
 from django.db.models import Case, F, When, Value, CharField, Q
 from django.db.models.functions import Concat
@@ -18,8 +20,12 @@ def get_category_choices():
 
 
 class ProductFilter(django_filters.FilterSet):
-    price_gte = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
-    price_lte = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
+    price_gte = django_filters.NumberFilter(
+        field_name="price", lookup_expr="gte", label="Фильтрация по цене (больше чем)"
+    )
+    price_lte = django_filters.NumberFilter(
+        field_name="price", lookup_expr="lte", label="Фильтрация по цене (меньше чем)"
+    )
     category = django_filters.NumberFilter(
         method="category_filter", label="Поиск id категории"
     )
@@ -27,7 +33,8 @@ class ProductFilter(django_filters.FilterSet):
         fields=(
             ("price", "price"),
             ("id", "id"),
-        )
+        ),
+        label="Сортировка по цене или новизне",
     )
     search = django_filters.CharFilter(
         method="search_filter", label="Поиск по названию/описанию"
@@ -37,8 +44,17 @@ class ProductFilter(django_filters.FilterSet):
     )
 
     def prop_filter(self, queryset, name, value):
-        values = value.split(',')
-        return queryset.filter(filter_values__value__in=values)
+        filtered_queryset = queryset
+        filter_json = json.loads(value)
+        for filter_name in filter_json.keys():
+            filter_list = filter_json.get(filter_name)
+            if len(filter_list) == 0:
+                continue
+            filtered_queryset = filtered_queryset.filter(
+                filter_values__filter__name=filter_name,
+                filter_values__value__in=filter_list,
+            )
+        return filtered_queryset
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(
@@ -46,7 +62,7 @@ class ProductFilter(django_filters.FilterSet):
         )
 
     def category_filter(self, queryset, name, value):
-        where = f"category_id = any(get_children({value}))"
+        where = f"product.category_id = any(get_children({value}))"
         return queryset.extra(where=[where])
 
     class Meta:
