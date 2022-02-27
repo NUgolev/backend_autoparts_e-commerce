@@ -13,11 +13,20 @@ from drf_spectacular.views import (
 )
 from django.conf.urls.static import static
 
+static_routes = ['shop', 'home', 'cart']
+
+static_patterns = [
+    re_path(r'^{0}/.*$'.format(route), TemplateView.as_view(template_name='index.html')) for route in static_routes
+]
+
 
 urlpatterns = [
+    path('', TemplateView.as_view(template_name='index.html')),
     path("api/", include("api.urls")),
     path("admin/", admin.site.urls),
 ]
+
+urlpatterns += static_patterns
 
 print(settings.STATIC_DIR)
 # То что ниже не должно работать в проде. За раздачу статики должен отвечать nginx или apache
